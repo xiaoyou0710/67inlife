@@ -2,7 +2,29 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    
+    <title>生活裡的 67 | 捕捉日常中的數字迷因</title>
+    <meta name="description" content="這是一個收集生活中各種「67」數字與巧合的迷因圖庫。無論是招牌、車牌還是發票，只要有 67，就有我們的蹤跡。快來投稿你發現的 67！">
+    <meta name="keywords" content="67, 67迷因, 生活裡的67, 迷因圖庫, 數字巧合, 攝影, meme 67, 67 meme">
+    <meta name="author" content="67 Community">
+    <link rel="canonical" href="https://xiaoyou0710.github.io/67inlife/">
+
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="logo.png">
+
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://xiaoyou0710.github.io/67inlife/">
+    <meta property="og:title" content="生活裡的 67 | 捕捉日常中的數字迷因">
+    <meta property="og:description" content="捕捉隱藏在日常生活中的 67。這是一個專屬於 67 發現者的迷因社群。">
+    <meta property="og:image" content="OGImage.jpg">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="生活裡的 67 | 捕捉日常中的數字迷因">
+    <meta name="twitter:description" content="捕捉隱藏在日常生活中的 67。這是一個專屬於 67 發現者的迷因社群。">
+    <meta name="twitter:image" content="OGImage.jpg">
     <title>生活裡的 67</title>
     
     <style>
@@ -24,7 +46,6 @@
             -webkit-font-smoothing: antialiased;
         }
 
-        /* --- 背景：無窮流動 --- */
         .bg-container {
             position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
             pointer-events: none; z-index: 0;
@@ -37,7 +58,6 @@
         }
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
-        /* --- Header 區域 --- */
         header {
             position: relative; z-index: 10; text-align: center;
             padding: 60px 20px; background-color: rgba(255, 255, 255, 0.95);
@@ -75,7 +95,6 @@
         }
         #searchInput:focus { background-color: #fff; border-color: #000; }
 
-        /* --- 圖庫 Grid --- */
         main {
             position: relative; z-index: 5; max-width: 1200px;
             margin: 40px auto; padding: 0 20px;
@@ -101,7 +120,6 @@
             font-weight: 900; letter-spacing: 0.5px;
         }
 
-        /* 載入中動畫 */
         #loader { text-align: center; font-weight: 900; color: #999; margin: 50px; font-size: 1.5rem; }
 
         .fab {
@@ -113,7 +131,6 @@
         }
         .fab svg { width: 30px; height: 30px; fill: white; }
 
-        /* 震動特效 */
         .vibrate-mode { animation: shake 0.1s infinite; }
         @keyframes shake { 0% { transform: translate(1px, 1px); } 50% { transform: translate(-1px, -2px); } 100% { transform: translate(1px, -1px); } }
 
@@ -139,7 +156,7 @@
         </a>
         <h1 id="title">生活裡的&nbsp;<span class="digit-6" id="d6">6</span><span class="digit-7" id="d7">7</span></h1>
         <div class="controls">
-            <input type="text" id="searchInput" placeholder="搜尋 67...">
+            <input type="text" id="searchInput" placeholder="">
         </div>
     </header>
 
@@ -156,11 +173,13 @@
 
         let allData = [];
 
-        // 1. 標題動畫
         const d6 = document.getElementById('d6'), d7 = document.getElementById('d7'), title = document.getElementById('title');
         let phase = 0, freq = 0.05, isHover = false;
         title.onmouseenter = () => isHover = true;
         title.onmouseleave = () => isHover = false;
+        title.ontouchstart = () => isHover = true;
+        title.ontouchend = () => isHover = false;
+
         function animateTitle() {
             if (isHover) { if (freq < 0.8) freq += 0.003; } 
             else { if (freq > 0.05) freq -= 0.01; else freq = 0.05; }
@@ -172,13 +191,37 @@
         }
         animateTitle();
 
-        // 2. 從 Google Sheets 抓取資料
+        const searchInput = document.getElementById('searchInput');
+        const placeholders = ["搜尋 67...", "尋找第 67 頁...", "Six~ Seven~", "誰發現了 67？"];
+        let pIndex = 0, charIndex = 0, isDeleting = false;
+
+        function typeEffect() {
+            const currentText = placeholders[pIndex];
+            if (isDeleting) {
+                searchInput.placeholder = currentText.substring(0, charIndex--);
+            } else {
+                searchInput.placeholder = currentText.substring(0, charIndex++);
+            }
+
+            let speed = isDeleting ? 50 : 150;
+            if (!isDeleting && charIndex > currentText.length) {
+                isDeleting = true;
+                speed = 1500; // 停頓時間
+            } else if (isDeleting && charIndex < 0) {
+                isDeleting = false;
+                pIndex = (pIndex + 1) % placeholders.length;
+                charIndex = 0;
+                speed = 500;
+            }
+            setTimeout(typeEffect, speed);
+        }
+        typeEffect();
+
         async function loadSheetData() {
             try {
                 const response = await fetch(SHEET_URL);
                 const text = await response.text();
                 
-                // 更加精確的解析方式：找到第一個 { 並截取到最後一個 }
                 const start = text.indexOf('{');
                 const end = text.lastIndexOf('}') + 1;
                 const jsonString = text.substring(start, end);
@@ -186,29 +229,22 @@
                 
                 const rows = jsonData.table.rows;
 
-                // 根據你提供的 json.txt 修正索引值：
-                // row.c[0] = ID (Column A)
-                // row.c[1] = TITLE (Column B)
-                // row.c[2] = IMAGE (Column C)
                 allData = rows.map(row => {
-                    // 確保該列有資料才執行映射
                     if (!row || !row.c) return null;
-                    
                     return {
-                        // 使用 .f (格式化後的字串) 或 .v (原始值)，避免數值格式錯誤
                         c: row.c[0] ? (row.c[0].f || row.c[0].v) : '匿名',
                         t: row.c[1] ? (row.c[1].f || row.c[1].v) : '無標題',
                         i: row.c[2] ? row.c[2].v : ''
                     };
                 })
-                .filter(item => item !== null && item.i) // 過濾掉空行或沒圖片的行
-                .reverse(); // 最新投稿在前
+                .filter(item => item !== null && item.i)
+                .reverse(); 
 
                 document.getElementById('loader').style.display = 'none';
                 render(allData);
             } catch (e) {
                 console.error("Sheet Error:", e);
-                document.getElementById('loader').textContent = "讀取失敗，請確認試算表已「知道連結的人均可查看」";
+                document.getElementById('loader').textContent = "讀取失敗，請確認網路連線";
             }
         }
 
@@ -216,7 +252,6 @@
             const container = document.getElementById('gallery');
             container.innerHTML = '';
             data.forEach(item => {
-                if(!item.i) return; // 沒圖片就不顯示
                 const card = document.createElement('div');
                 card.className = 'card';
                 card.innerHTML = `
@@ -233,8 +268,7 @@
             });
         }
 
-        // 3. 搜尋功能
-        document.getElementById('searchInput').oninput = function() {
+        searchInput.oninput = function() {
             const query = this.value.toLowerCase();
             const filtered = allData.filter(item => 
                 item.t.toLowerCase().includes(query) || item.c.toLowerCase().includes(query)
