@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>投稿 67 | 生活裡的 67</title>
+    
+    <!-- 裁切插件 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css">
+    
+    <style>
+        :root {
+            --bg-primary: #FFFFFF;
+            --bg-secondary: #F8F9FA;
+            --text-main: #1A1A1A;
+            --border-light: #EAEAEA;
+            --success-color: #00C853;
+            --error-color: #FF3D00;
+        }
+
+        body {
+            margin: 0; padding: 0;
+            font-family: "Arial Black", "Inter", sans-serif;
+            background-color: var(--bg-secondary);
+            color: var(--text-main);
+            overflow-x: hidden;
+            display: flex; flex-direction: column; min-height: 100vh;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* 背景流動 */
+        .bg-container {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            pointer-events: none; z-index: 0;
+            display: flex; flex-direction: column; justify-content: center;
+            transform: rotate(-10deg) scale(1.8); gap: 12vh;
+        }
+        .scroll-content {
+            display: flex; white-space: nowrap; font-size: 15vh; font-weight: 900;
+            color: rgba(0, 0, 0, 0.02); animation: marquee 40s linear infinite;
+        }
+        @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+        header {
+            position: relative; z-index: 10; text-align: center;
+            padding: 60px 20px; background-color: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(20px); border-bottom: 1px solid var(--border-light);
+        }
+
+        h1 {
+            font-size: clamp(2.5rem, 7vw, 4.5rem);
+            font-weight: 900; letter-spacing: -2px; margin: 0;
+            display: flex; justify-content: center; align-items: center; gap: 0.5em;
+            cursor: pointer;
+        }
+        .digit-6, .digit-7 { display: inline-block; will-change: transform; }
+
+        .nav-link {
+            margin-top: 15px; display: inline-block;
+            text-decoration: none; color: #999; font-weight: 900; font-size: 0.9rem;
+        }
+
+        main {
+            position: relative; z-index: 5;
+            flex: 1; display: flex; align-items: center; justify-content: center;
+            padding: 35px 20px;
+        }
+
+        /* 修正表單容器，確保內部卡片能撐開 */
+        #gform {
+            width: 100%;
+            display: flex;
+            justify-content: center;
+        }
+
+        /* 設定最大寬度 700px */
+        .submit-card {
+            background: #fff; 
+            width: 95%;           /* 小螢幕時佔據 95% */
+            max-width: 700px;     /* 最大寬度限制 */
+            padding: 45px;        /* 增加內距感 */
+            border-radius: 40px;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.04);
+            box-sizing: border-box;
+            transition: opacity 0.3s ease;
+        }
+
+        .success-overlay { display: none; text-align: center; }
+        .success-overlay h2 { font-size: 3rem; font-weight: 900; margin: 20px 0; }
+
+        .form-group { margin-bottom: 30px; }
+        .form-group label {
+            display: block; margin-bottom: 12px;
+            font-weight: 900; font-size: 1.2rem; color: #000;
+        }
+
+        .form-group input {
+            width: 100%; padding: 20px 25px;
+            border: 2px solid var(--border-light); border-radius: 20px;
+            font-family: inherit; font-size: 1.1rem; font-weight: 900;
+            box-sizing: border-box; outline: none; transition: 0.3s;
+            background-color: var(--bg-secondary);
+        }
+        .form-group input:focus { border-color: #000; background-color: #fff; }
+
+        .upload-area {
+            margin-top: 10px; display: flex; align-items: center; gap: 20px;
+        }
+        .file-label {
+            background-color: #000 !important; color: #fff !important;
+            padding: 14px 30px; border-radius: 50px; cursor: pointer;
+            font-size: 1rem; font-weight: 900; 
+            display: inline-flex; align-items: center; justify-content: center;
+            transition: 0.3s; border: none; min-width: 140px;
+            text-align: center; line-height: 1;
+        }
+        .file-label:hover { background-color: #333 !important; }
+        
+        #uploadStatus { 
+            display: flex; align-items: center; gap: 8px;
+            font-size: 0.95rem; font-weight: 900; color: #999; 
+        }
+        .icon-svg { width: 20px; height: 20px; fill: currentColor; flex-shrink: 0; }
+
+        .submit-btn {
+            width: 100%; padding: 15px;
+            background-color: #000; color: #fff;
+            border: none; border-radius: 60px;
+            font-family: inherit; font-size: 1.3rem; font-weight: 900;
+            cursor: pointer; transition: 0.3s;
+        }
+        .submit-btn:disabled { background-color: #CCC; cursor: not-allowed; }
+        .submit-btn:not(:disabled):hover { background-color: #333; transform: translateY(-2px); }
+
+        .reset-btn {
+            display: inline-flex; align-items: center; gap: 10px;
+            margin-top: 30px; padding: 18px 40px;
+            background: #EEE; color: #000; border-radius: 50px;
+            text-decoration: none; font-weight: 900; transition: 0.3s;
+            cursor: pointer;
+        }
+        .reset-btn:hover { background: #DDD; }
+
+        input[type="file"] { display: none; }
+
+        /* 裁切 Modal */
+        #cropModal {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0,0,0,0.95); z-index: 1000;
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .crop-wrapper { width: 90%; max-width: 800px; background: #000; }
+        #cropImage { max-width: 100%; display: block; }
+        .crop-controls { margin-top: 30px; display: flex; gap: 20px; }
+        .crop-btn {
+            padding: 18px 50px; border-radius: 50px; border: none;
+            font-weight: 900; cursor: pointer; font-size: 1.1rem; font-family: inherit;
+        }
+        .btn-confirm { background: #fff; color: #000; }
+        .btn-cancel { background: #444; color: #fff; }
+
+        @media (max-width: 600px) {
+            header { padding: 35px 15px; }
+            .submit-card { padding: 40px 25px; border-radius: 30px; }
+            h1 { font-size: 2.2rem; }
+            .upload-area { flex-direction: column; align-items: flex-start; gap: 10px; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="bg-container">
+        <div class="scroll-content">67 67 67 67 67 67 67 67 67 67 67 67 67 67 67 67 67 67 67 67</div>
+    </div>
+
+    <!-- 裁切視窗 -->
+    <div id="cropModal">
+        <div class="crop-wrapper"><img id="cropImage"></div>
+        <div class="crop-controls">
+            <button class="crop-btn btn-cancel" onclick="closeCropModal()">取消</button>
+            <button class="crop-btn btn-confirm" id="cropDoneBtn">裁切完成</button>
+        </div>
+    </div>
+
+    <!-- 隱藏 iFrame 用於處理 Google Forms 提交 -->
+    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){showSuccess();}"></iframe>
+
+    <header>
+        <h1 id="title">投稿&nbsp;<span class="digit-6" id="d6">6</span><span class="digit-7" id="d7">7</span></h1>
+        <a href="index.html" class="nav-link">回到首頁</a>
+    </header>
+
+    <main>
+        <form id="gform" action="https://docs.google.com/forms/d/e/1FAIpQLSefPYkzxoWvOTMcSBtd6nELDXBa3ZgSy8k3Xw7wn4Pd_RX2yQ/formResponse" method="POST" target="hidden_iframe" onsubmit="submitted=true;">
+            
+            <!-- 投稿表單卡片 -->
+            <div class="submit-card" id="formCard">
+                <div class="form-group">
+                    <label>投稿者 ID</label>
+                    <input type="text" name="entry.919049309" id="id_field" placeholder="您的Threads ID，若填寫會顯示在網站中">
+                </div>
+
+                <div class="form-group">
+                    <label>作品標題<span style="color:red;">*</span></label>
+                    <input type="text" name="entry.1083045612" id="title_field" placeholder="您對此圖的簡單說明，如：67元的早餐" required>
+                </div>
+
+                <div class="form-group">
+                    <label>圖片檔案 (5:3)<span style="color:red;">*</span></label>
+                    <div class="upload-area">
+                        <label for="fileInput" class="file-label">選取檔案</label>
+                        <input type="file" id="fileInput" accept="image/*">
+                        <span id="uploadStatus">尚未選取檔案</span>
+                    </div>
+                    <!-- 儲存 ImgBB 返回的 URL -->
+                    <input type="hidden" name="entry.1835644310" id="url_field">
+                </div>
+
+                <button type="submit" class="submit-btn" id="submitBtn" disabled>請先選取圖片</button>
+            </div>
+
+            <!-- 成功訊息區 -->
+            <div class="submit-card success-overlay" id="successCard">
+                <svg class="icon-svg" style="width:80px; height:80px; color:var(--success-color); margin-bottom: 20px;" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                <h2>投稿成功</h2>
+                <p style="font-weight:900; color:#888; font-size: 1.1rem;">感謝你對 67 迷因的貢獻</p>
+                <div class="reset-btn" onclick="resetForm()">
+                    <svg class="icon-svg" viewBox="0 0 24 24"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    再次投稿
+                </div>
+            </div>
+        </form>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
+
+    <script>
+        const IMGBB_API_KEY = 'c180aecf2bbb52c6785dea5e7ccfd900';
+        let submitted = false;
+        let cropper;
+
+        // SVG 圖標定義
+        const svgLoading = `<svg class="icon-svg" viewBox="0 0 24 24" style="animation: spin 1s linear infinite;"><path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48l2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48l2.83-2.83" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><style>@keyframes spin {100%{transform:rotate(360deg);}}</style>`;
+        const svgSuccess = `<svg class="icon-svg" style="color:var(--success-color);" viewBox="0 0 24 24"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41z"/></svg>`;
+        const svgError = `<svg class="icon-svg" style="color:var(--error-color);" viewBox="0 0 24 24"><path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>`;
+
+        // 標題動畫邏輯
+        const d6 = document.getElementById('d6'), d7 = document.getElementById('d7'), title = document.getElementById('title');
+        let phase = 0, freq = 0.05, isHover = false;
+        title.onmouseenter = () => isHover = true;
+        title.onmouseleave = () => isHover = false;
+        function animateTitle() {
+            if (isHover) { if (freq < 0.8) freq += 0.003; } 
+            else { if (freq > 0.05) freq -= 0.01; else freq = 0.05; }
+            phase += freq;
+            const y = Math.sin(phase) * 12;
+            d6.style.transform = `translateY(${y}px)`;
+            d7.style.transform = `translateY(${-y}px)`;
+            requestAnimationFrame(animateTitle);
+        }
+        animateTitle();
+
+        // 圖片上傳與裁切
+        const fileInput = document.getElementById('fileInput');
+        const cropModal = document.getElementById('cropModal');
+        const cropImage = document.getElementById('cropImage');
+        const cropDoneBtn = document.getElementById('cropDoneBtn');
+        const uploadStatus = document.getElementById('uploadStatus');
+        const urlField = document.getElementById('url_field');
+        const submitBtn = document.getElementById('submitBtn');
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+                cropImage.src = ev.target.result;
+                cropModal.style.display = 'flex';
+                if (cropper) cropper.destroy();
+                cropper = new Cropper(cropImage, { aspectRatio: 5/3, viewMode: 1, background: false });
+            };
+            reader.readAsDataURL(file);
+        });
+
+        function closeCropModal() { cropModal.style.display = 'none'; fileInput.value = ''; }
+
+        cropDoneBtn.addEventListener('click', () => {
+            const canvas = cropper.getCroppedCanvas({ width: 1000 });
+            uploadStatus.innerHTML = `${svgLoading} 正在上傳中...`;
+            cropModal.style.display = 'none';
+
+            canvas.toBlob(async (blob) => {
+                const formData = new FormData();
+                formData.append('image', blob);
+                try {
+                    const res = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, { method: 'POST', body: formData });
+                    const result = await res.json();
+                    if (result.success) {
+                        urlField.value = result.data.url;
+                        uploadStatus.innerHTML = `${svgSuccess} 上傳成功`;
+                        submitBtn.disabled = false;
+                        submitBtn.innerText = "確認投稿";
+                    }
+                } catch (e) {
+                    uploadStatus.innerHTML = `${svgError} 上傳失敗`;
+                    submitBtn.innerText = "上傳失敗，請重試";
+                }
+            }, 'image/jpeg');
+        });
+
+        function showSuccess() {
+            document.getElementById('formCard').style.display = 'none';
+            document.getElementById('successCard').style.display = 'block';
+            submitted = false;
+        }
+
+        function resetForm() {
+            document.getElementById('gform').reset();
+            urlField.value = "";
+            uploadStatus.innerHTML = "尚未選取檔案";
+            submitBtn.disabled = true;
+            submitBtn.innerText = "請先選取圖片";
+            document.getElementById('successCard').style.display = 'none';
+            document.getElementById('formCard').style.display = 'block';
+        }
+    </script>
+</body>
+</html>
