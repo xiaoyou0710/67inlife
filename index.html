@@ -3,30 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    
-    <title>生活裡的 67 | 捕捉日常中的數字迷因</title>
-    <meta name="description" content="這是一個收集生活中各種「67」數字與巧合的迷因圖庫。無論是招牌、車牌還是發票，只要有 67，就有我們的蹤跡。快來投稿你發現的 67！">
-    <meta name="keywords" content="67, 67迷因, 生活裡的67, 迷因圖庫, 數字巧合, 攝影, meme 67, 67 meme, sixseven, six seven">
-    <meta name="author" content="67 Community">
-    <link rel="canonical" href="https://xiaoyou0710.github.io/67inlife/">
-
-    <link rel="icon" href="LOGO.png" type="image/png">
-    <link rel="apple-touch-icon" href="logo.png">
-
-    <meta property="og:type" content="website">
-    <meta property="og:url" content="https://xiaoyou0710.github.io/67inlife/">
-    <meta property="og:title" content="生活裡的 67 | 捕捉日常中的數字迷因">
-    <meta property="og:description" content="捕捉隱藏在日常生活中的 67。這是一個專屬於 67 發現者的迷因社群。">
-    <meta property="og:image" content="OGImage.jpg">
-    <meta property="og:image:width" content="1200">
-    <meta property="og:image:height" content="630">
-
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="生活裡的 67 | 捕捉日常中的數字迷因">
-    <meta name="twitter:description" content="捕捉隱藏在日常生活中的 67。這是一個專屬於 67 發現者的迷因社群。">
-    <meta name="twitter:image" content="OGImage.jpg">
     <title>生活裡的 67</title>
-    
     <style>
         :root {
             --bg-primary: #FFFFFF;
@@ -52,10 +29,12 @@
             display: flex; flex-direction: column; justify-content: center;
             transform: rotate(-10deg) scale(1.8); gap: 12vh;
         }
+
         .scroll-content {
             display: flex; white-space: nowrap; font-size: 15vh; font-weight: 900;
             color: rgba(0, 0, 0, 0.02); animation: marquee 40s linear infinite;
         }
+
         @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
 
         header {
@@ -72,6 +51,7 @@
             transition: 0.3s; display: flex; align-items: center; gap: 8px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
+
         .nav-submit-btn:hover { transform: translateY(-2px); background: #333; }
 
         h1 {
@@ -80,6 +60,7 @@
             display: flex; justify-content: center; align-items: center; gap: 0.5em;
             cursor: pointer;
         }
+
         .digit-6, .digit-7 { display: inline-block; will-change: transform; }
 
         .controls { 
@@ -90,37 +71,59 @@
         #searchInput {
             width: 90%; max-width: 500px; padding: 15px 25px;
             border: 2px solid var(--border-light); border-radius: 60px;
-            font-size: 1rem; font-weight: 900; outline: none; transition: 0.3s;
+            font-size: 1.2rem; font-weight: 900; outline: none; transition: 0.3s;
             background-color: var(--bg-secondary);
         }
+
         #searchInput:focus { background-color: #fff; border-color: #000; }
 
         main {
             position: relative; z-index: 5; max-width: 1200px;
-            margin: 40px auto; padding: 0 20px;
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-            gap: 30px;
+            margin: 40px auto; padding: 0 24px;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); 
+            gap: 40px;
         }
 
-        .card { background: #fff; border-radius: 15px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.02); transition: 0.4s; }
-        .card:hover { transform: translateY(-8px); }
+        .card { background: #fff; border-radius: 20px; overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.02); transition: 0.4s; }
+        .card:hover { transform: translateY(-10px); }
+
+        .card-category-header {
+            background-color: #FFFFFF;
+            padding: 14px 20px;
+            font-size: 0.8rem;
+            font-weight: 900;
+            color: #AAAAAA;
+            border-bottom: 1px solid #F0F0F0;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            min-height: 45px;
+            box-sizing: border-box;
+            align-items: center;
+        }
+
+        .cat-item::after { content: "•"; margin-left: 8px; color: #DDD; }
+        .cat-item:last-child::after { content: ""; }
 
         .image-box {
             width: 100%; aspect-ratio: 5 / 3; background-color: #F0F0F0; 
             display: flex; align-items: center; justify-content: center;
             overflow: hidden;
         }
-        .image-box img { width: 100%; height: 100%; object-fit: cover; }
-        .error-label { display: none; font-size: 1.2rem; font-weight: 900; color: #CCCCCC; }
 
-        .card-info { padding: 25px 20px; text-align: center; }
-        .card-info h3 { margin: 0; font-size: 1.1rem; font-weight: 900; color: #000; line-height: 1.4; }
+        .image-box img { width: 100%; height: 100%; object-fit: cover; }
+        .error-label { display: none; font-size: 1.5rem; font-weight: 900; color: #CCCCCC; letter-spacing: 1px; }
+
+        .card-info { padding: 25px; text-align: center; }
+        .card-info h3 { margin: 0; font-size: 1.2rem; font-weight: 900; color: #000; line-height: 1.4; }
         .card-contributor {
             margin-top: 10px; font-size: 0.75rem; color: var(--text-sub);
             font-weight: 900; letter-spacing: 0.5px;
         }
 
-        #loader { text-align: center; font-weight: 900; color: #999; margin: 50px; font-size: 1.5rem; }
+        #loader { text-align: center; font-weight: 900; color: #999; margin: 100px auto; font-size: 1.5rem; }
 
         .fab {
             position: fixed; bottom: 30px; right: 30px;
@@ -129,6 +132,7 @@
             text-decoration: none; z-index: 100; box-shadow: 0 10px 30px rgba(0,0,0,0.3);
             transition: 0.3s; display: none;
         }
+
         .fab svg { width: 30px; height: 30px; fill: white; }
 
         .vibrate-mode { animation: shake 0.1s infinite; }
@@ -175,10 +179,11 @@
 
         const d6 = document.getElementById('d6'), d7 = document.getElementById('d7'), title = document.getElementById('title');
         let phase = 0, freq = 0.05, isHover = false;
-        title.onmouseenter = () => isHover = true;
-        title.onmouseleave = () => isHover = false;
-        title.ontouchstart = () => isHover = true;
-        title.ontouchend = () => isHover = false;
+        
+        title.addEventListener('mouseenter', () => isHover = true);
+        title.addEventListener('mouseleave', () => isHover = false);
+        title.addEventListener('touchstart', () => isHover = true);
+        title.addEventListener('touchend', () => isHover = false);
 
         function animateTitle() {
             if (isHover) { if (freq < 0.8) freq += 0.003; } 
@@ -206,7 +211,7 @@
             let speed = isDeleting ? 50 : 150;
             if (!isDeleting && charIndex > currentText.length) {
                 isDeleting = true;
-                speed = 1500; // 停頓時間
+                speed = 1500;
             } else if (isDeleting && charIndex < 0) {
                 isDeleting = false;
                 pIndex = (pIndex + 1) % placeholders.length;
@@ -221,30 +226,30 @@
             try {
                 const response = await fetch(SHEET_URL);
                 const text = await response.text();
-                
                 const start = text.indexOf('{');
                 const end = text.lastIndexOf('}') + 1;
                 const jsonString = text.substring(start, end);
                 const jsonData = JSON.parse(jsonString);
-                
-                const rows = jsonData.table.rows;
+                const rows = jsonData.table.rows.slice(1);
 
                 allData = rows.map(row => {
                     if (!row || !row.c) return null;
+                    const tagRaw = row.c[3] ? (row.c[3].f || row.c[3].v || "") : "";
+                    const tags = tagRaw ? tagRaw.split(',').map(t => t.trim()) : [];
                     return {
                         c: row.c[0] ? (row.c[0].f || row.c[0].v) : '匿名',
                         t: row.c[1] ? (row.c[1].f || row.c[1].v) : '無標題',
-                        i: row.c[2] ? row.c[2].v : ''
+                        i: row.c[2] ? row.c[2].v : '',
+                        tags: tags
                     };
                 })
                 .filter(item => item !== null && item.i)
-                .reverse(); 
+                .reverse();
 
                 document.getElementById('loader').style.display = 'none';
                 render(allData);
             } catch (e) {
-                console.error("Sheet Error:", e);
-                document.getElementById('loader').textContent = "讀取失敗，請確認網路連線";
+                document.getElementById('loader').textContent = "讀取失敗";
             }
         }
 
@@ -254,16 +259,23 @@
             data.forEach(item => {
                 const card = document.createElement('div');
                 card.className = 'card';
+                const tagContent = item.tags.map(t => `<span class="cat-item">${t}</span>`).join('');
                 card.innerHTML = `
+                    <div class="card-category-header">${tagContent}</div>
                     <div class="image-box">
                         <img src="${item.i}" loading="lazy" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                        <div class="error-label">ERROR 67</div>
+                        <div class="error-label" style="display:none;">ERROR 67</div>
                     </div>
                     <div class="card-info">
                         <h3>${item.t}</h3>
                         <div class="card-contributor">@${item.c}</div>
                     </div>
                 `;
+                const img = card.querySelector('img');
+                img.onerror = function() {
+                    this.style.display = 'none';
+                    this.nextElementSibling.style.display = 'block';
+                };
                 container.appendChild(card);
             });
         }
@@ -271,11 +283,17 @@
         searchInput.oninput = function() {
             const query = this.value.toLowerCase();
             const filtered = allData.filter(item => 
-                item.t.toLowerCase().includes(query) || item.c.toLowerCase().includes(query)
+                item.t.toLowerCase().includes(query) || 
+                item.c.toLowerCase().includes(query) ||
+                (item.tags && item.tags.some(tag => tag.toLowerCase().includes(query)))
             );
             render(filtered);
-            if (query === '67') document.body.classList.add('vibrate-mode');
-            else document.body.classList.remove('vibrate-mode');
+            if (query === '67') {
+                document.body.classList.add('vibrate-mode');
+                if (navigator.vibrate) navigator.vibrate(500);
+            } else {
+                document.body.classList.remove('vibrate-mode');
+            }
         };
 
         loadSheetData();
